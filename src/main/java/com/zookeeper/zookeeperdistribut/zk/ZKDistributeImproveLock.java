@@ -3,6 +3,7 @@ package com.zookeeper.zookeeperdistribut.zk;
 import com.zookeeper.zookeeperdistribut.lock.MyZkSerializer;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.ZkClient;
+import org.I0Itec.zkclient.exception.ZkNodeExistsException;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,13 +28,18 @@ public class ZKDistributeImproveLock implements Lock {
     private String currentPath;
     private String beforePath;
 
-    public ZKDistributeImproveLock(String lockPath, ZkClient client, String currentPath, String beforePath) {
+    public ZKDistributeImproveLock(String lockPath) {
         super();
         LockPath = lockPath;
         client = new ZkClient("localhost:2181");
         client.setZkSerializer(new MyZkSerializer());
         if (!this.client.exists(LockPath)){
-            this.client.createPersistent(lockPath);
+            try {
+                this.client.createPersistent(lockPath);
+            }catch (ZkNodeExistsException e){
+
+            }
+
         }
         this.currentPath = currentPath;
         this.beforePath = beforePath;
@@ -104,7 +110,7 @@ public class ZKDistributeImproveLock implements Lock {
     @Override
     public void unlock() {
         //删除节点
-        this.client.delete(this.currentPath);
+        client.delete(currentPath);
 
     }
 

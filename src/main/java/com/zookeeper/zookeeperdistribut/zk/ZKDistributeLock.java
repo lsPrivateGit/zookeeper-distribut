@@ -49,10 +49,13 @@ public class ZKDistributeLock implements Lock {
         if(!tryLock()){
             //没获取锁 阻塞自己
             waitForLock();
+            //再次尝试
+            lock();
         }
     }
     private void waitForLock(){
         CountDownLatch cdl = new CountDownLatch(1);
+
         IZkDataListener listener = new IZkDataListener(){
             @Override
             public void handleDataChange(String s, Object o) throws Exception {
