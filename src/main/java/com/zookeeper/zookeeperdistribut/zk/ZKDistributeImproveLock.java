@@ -51,22 +51,25 @@ public class ZKDistributeImproveLock implements Lock {
         if (this.currentPath == null){
             currentPath = this.client.createEphemeralSequential(LockPath+"/","123");
 
-            System.out.println("currentPath:==============="+currentPath);
+            System.out.println(Thread.currentThread().getName()+"currentPath:==============="+currentPath);
         }
         //获得所有的子
         List<String> children = this.client.getChildren(LockPath);
         //排序list
         Collections.sort(children);
-        System.out.println("children:==============="+children.toString());
+        System.out.println(Thread.currentThread().getName()+"children:==============="+children.toString());
 
         //判断当前节点是否最小的
         if (currentPath.equals(LockPath+"/"+children.get(0))){
+            System.out.println(Thread.currentThread().getName()+"最小:"+children.get(0));
             return true;
         }else {
             //取到当前一个
             //得到字节的索引
+            System.out.println(Thread.currentThread().getName()+"currentPath.substring(LockPath.length()+1):"+currentPath.substring(LockPath.length()+1));
             int curIndex = children.indexOf(currentPath.substring(LockPath.length()+1));
             beforePath = LockPath+"/"+children.get(curIndex-1);
+            System.out.println(Thread.currentThread().getName()+"beforePath:"+beforePath);
         }
         return false;
     }
@@ -95,6 +98,7 @@ public class ZKDistributeImproveLock implements Lock {
             }
         };
 
+        System.out.println(Thread.currentThread().getName()+"beforePath===:"+beforePath);
         client.subscribeDataChanges(this.beforePath,listener);
         //怎么让自己阻塞
         if (this.client.exists(this.beforePath)){
@@ -112,6 +116,7 @@ public class ZKDistributeImproveLock implements Lock {
     @Override
     public void unlock() {
         //删除节点
+        System.out.println(Thread.currentThread().getName()+"删除：currentPath："+currentPath);
         client.delete(currentPath);
 
     }

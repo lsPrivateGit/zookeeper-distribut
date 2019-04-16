@@ -11,7 +11,7 @@ public class ConcurrentTestDistributeDemo {
 
     public static void main(String[] args) {
         //并发数量
-        int currency = 50;
+        int currency = 3;
 
         //循环屏障
         CyclicBarrier cb = new CyclicBarrier(currency);

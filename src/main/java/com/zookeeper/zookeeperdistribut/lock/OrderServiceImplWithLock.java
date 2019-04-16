@@ -33,11 +33,6 @@ public class OrderServiceImplWithLock implements OrderService{
             orderCode = ocg.getOrderCode();
             System.out.println(Thread.currentThread().getName()+"==============="+orderCode);
         }finally {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             System.out.println("释放锁~~");
             lock.unlock();
         }
