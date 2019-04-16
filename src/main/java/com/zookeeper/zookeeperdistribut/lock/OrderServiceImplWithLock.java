@@ -28,15 +28,15 @@ public class OrderServiceImplWithLock implements OrderService{
 */
         Lock lock = new ZKDistributeImproveLock("/study888");
         try {
-
-            /*lock.lock();*/
+            lock.lock();
             //获取订单编号
             orderCode = ocg.getOrderCode();
+            System.out.println(Thread.currentThread().getName()+"==============="+orderCode);
         }finally {
             lock.unlock();
         }
 
-        System.out.println(Thread.currentThread().getName()+"==============="+orderCode);
+
 /*
         Lock lock = new ZKDistributeLock("/study888");
 */
