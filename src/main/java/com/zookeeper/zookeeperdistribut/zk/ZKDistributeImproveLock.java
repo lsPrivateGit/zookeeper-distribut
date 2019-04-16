@@ -35,6 +35,7 @@ public class ZKDistributeImproveLock implements Lock {
         client.setZkSerializer(new MyZkSerializer());
         if (!this.client.exists(LockPath)){
             try {
+                System.out.println("lockPath:---------------"+lockPath);
                 this.client.createPersistent(lockPath);
             }catch (ZkNodeExistsException e){
 
@@ -48,13 +49,15 @@ public class ZKDistributeImproveLock implements Lock {
     @Override
     public boolean tryLock() {
         if (this.currentPath == null){
-            currentPath = this.client.createEphemeralSequential(LockPath+"/","aaa");
+            currentPath = this.client.createEphemeralSequential(LockPath+"/","123");
+
+            System.out.println("currentPath:==============="+currentPath);
         }
         //获得所有的子
         List<String> children = this.client.getChildren(LockPath);
-
         //排序list
         Collections.sort(children);
+        System.out.println("children:==============="+children.toString());
 
         //判断当前节点是否最小的
         if (currentPath.equals(LockPath+"/"+children.get(0))){
@@ -84,12 +87,11 @@ public class ZKDistributeImproveLock implements Lock {
         IZkDataListener listener= new IZkDataListener() {
             @Override
             public void handleDataChange(String s, Object o) throws Exception {
-                System.out.println("---监听到节点被删除----");
-                cdl.countDown();
             }
             @Override
             public void handleDataDeleted(String s) throws Exception {
-
+                System.out.println("---监听到节点被删除----");
+                cdl.countDown();
             }
         };
 
